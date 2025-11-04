@@ -64,7 +64,7 @@ export default function CloudinaryUpload({ onUpload }: CloudinaryUploadProps) {
       },
       (err: any, info: any) => {
         if (!err && info.event === "success") {
-          console.log("✅ Uploaded:", info.info.secure_url);
+          console.log("Uploaded:", info.info.secure_url);
           onUpload(info.info.secure_url);
         }
       }

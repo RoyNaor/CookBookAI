@@ -147,7 +147,7 @@ export default function RecipesPage() {
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500 mt-10">לא נמצאו מתכונים 😋</p>
+        <p className="text-center text-gray-500 mt-10">לא נמצאו מתכונים</p>
       )}
 
       {/* מודאל יצירת מתכון */}
