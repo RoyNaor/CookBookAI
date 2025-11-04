@@ -6,15 +6,12 @@ from app import models
 from openai import OpenAI
 from dotenv import load_dotenv
 
-# 🌱 Load environment variables
+# Load environment variables
 load_dotenv()
 
-# -----------------------------
-# 🔹 Create image with DALL·E
-# -----------------------------
+# Create image with DALL·E
 @tool
 def generate_image(prompt: str) -> str:
-    """יוצר תמונה עם DALL·E לפי תיאור בעברית או אנגלית."""
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
         response = client.images.generate(
@@ -27,12 +24,9 @@ def generate_image(prompt: str) -> str:
         return f"שגיאה ביצירת תמונה: {e}"
 
 
-# -----------------------------
-# 🔹 Search image on Unsplash
-# -----------------------------
+# Search image on Unsplash
 @tool
 def search_unsplash(query_hebrew: str) -> str:
-    """מחפש תמונה מתאימה ב-Unsplash (מתורגם אוטומטית לאנגלית)."""
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
         translation = client.chat.completions.create(
@@ -56,12 +50,9 @@ def search_unsplash(query_hebrew: str) -> str:
     except Exception as e:
         return f"שגיאה בחיפוש תמונה: {e}"
 
-# -----------------------------
-# 🔹 Save recipe to DB
-# -----------------------------
+# Save recipe to DB
 @tool
 def save_recipe(recipe_json: str) -> str:
-    """שומר את המתכון הסופי במסד הנתונים המקומי."""
     db: Session = SessionLocal()
     try:
         if isinstance(recipe_json, str):
@@ -77,7 +68,7 @@ def save_recipe(recipe_json: str) -> str:
         db.add(db_recipe)
         db.commit()
         db.refresh(db_recipe)
-        print(f"✅ Recipe saved: {db_recipe.title} (ID: {db_recipe.id})")
+        print(f"Recipe saved: {db_recipe.title} (ID: {db_recipe.id})")
         return f"המתכון '{db_recipe.title}' נשמר בהצלחה במערכת!"
     except Exception as e:
         db.rollback()
@@ -86,12 +77,9 @@ def save_recipe(recipe_json: str) -> str:
         db.close()
 
 
-# -----------------------------
-# 🔹 Display recipe
-# -----------------------------
+# Display recipe
 @tool
 def display_recipe(recipe_json: str) -> str:
-    """מציג את המתכון על המסך בפורמט קריא למשתמש."""
     try:
         if isinstance(recipe_json, str):
             recipe_json = json.loads(recipe_json)
