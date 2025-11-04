@@ -1,4 +1,4 @@
-# 🍳 CookBookAI — AI-Powered Recipe Platform - Still In Dev!!!
+# 🍳 CookBookAI — AI-Powered Recipe Platform 
 
 **CookBookAI** is a full-stack application combining intelligent recipe generation powered by GPT-4 mini with a modern frontend built in Next.js and a FastAPI backend in Python.  
 It allows users to request, save, and visualize recipes with automatically generated images using Unsplash or DALL·E.
