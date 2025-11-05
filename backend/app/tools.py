@@ -12,6 +12,7 @@ load_dotenv()
 # Create image with DALL·E
 @tool
 def generate_image(prompt: str) -> str:
+    """Generates an image based on the given prompt using DALL·E."""
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
         response = client.images.generate(
@@ -21,12 +22,13 @@ def generate_image(prompt: str) -> str:
         )
         return response.data[0].url
     except Exception as e:
-        return f"שגיאה ביצירת תמונה: {e}"
+        return f"error while generating: {e}"
 
 
 # Search image on Unsplash
 @tool
 def search_unsplash(query_hebrew: str) -> str:
+    """Searches Unsplash for an image related to the query."""
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
         translation = client.chat.completions.create(
@@ -53,6 +55,7 @@ def search_unsplash(query_hebrew: str) -> str:
 # Save recipe to DB
 @tool
 def save_recipe(recipe_json: str) -> str:
+    """Saves the recipe data into the database."""
     db: Session = SessionLocal()
     try:
         if isinstance(recipe_json, str):
@@ -69,10 +72,10 @@ def save_recipe(recipe_json: str) -> str:
         db.commit()
         db.refresh(db_recipe)
         print(f"Recipe saved: {db_recipe.title} (ID: {db_recipe.id})")
-        return f"המתכון '{db_recipe.title}' נשמר בהצלחה במערכת!"
+        return f"the '{db_recipe.title}'saved!"
     except Exception as e:
         db.rollback()
-        return f"שגיאה בשמירת מתכון: {e}"
+        return f"error while saving: {e}"
     finally:
         db.close()
 
@@ -80,6 +83,7 @@ def save_recipe(recipe_json: str) -> str:
 # Display recipe
 @tool
 def display_recipe(recipe_json: str) -> str:
+    """Formats and displays the recipe content in a readable text form."""
     try:
         if isinstance(recipe_json, str):
             recipe_json = json.loads(recipe_json)
@@ -87,8 +91,13 @@ def display_recipe(recipe_json: str) -> str:
         ingredients = recipe_json.get("ingredients", [])
         steps = recipe_json.get("instructions", [])
 
+        closing_message = (
+            "\n\n🧑‍🍳 בתיאבון! אם תרצה שאשנה משהו במתכון או שאצור משהו חדש – פשוט תגיד 😊"
+        )
+
         formatted = f"🍽️ {title}\n\n🥕 רכיבים:\n" + "\n".join(f"- {i}" for i in ingredients)
         formatted += "\n\n🍳 הוראות הכנה:\n" + "\n".join(f"{idx+1}. {s}" for idx, s in enumerate(steps))
+        formatted += closing_message
         return formatted
     except Exception as e:
         return f"שגיאה בהצגת מתכון: {e}"
