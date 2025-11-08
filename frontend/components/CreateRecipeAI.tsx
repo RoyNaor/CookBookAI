@@ -10,7 +10,7 @@ interface CreateRecipeAIProps {
 
 export default function CreateRecipeAI({ onClose, onRecipeCreated }: CreateRecipeAIProps) {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([
-    { role: "assistant", content: "היי 👋 אני הסוכן הקולינרי שלך. ספר לי מה בא לך לבשל היום!" },
+    { role: "assistant", content: "היי 👋 אני הסו שף שלך להיום. ספר לי מה בא לך לבשל היום!" },
   ]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement | null>(null);

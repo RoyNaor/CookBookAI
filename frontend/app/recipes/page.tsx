@@ -6,6 +6,7 @@ import RecipeCard from "@/components/RecipeCard";
 import { Search, RotateCcw, Plus, XCircle } from "lucide-react";
 import CreateRecipeModal from "@/components/CreateRecipeModal"; 
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -14,6 +15,7 @@ export default function RecipesPage() {
   const [sortOption, setSortOption] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [extraFilter, setExtraFilter] = useState("");
+  const router = useRouter();
 
   const loadRecipes = async () => {
     const data = await getRecipes();
@@ -68,9 +70,9 @@ export default function RecipesPage() {
       {/* כותרת עליונה */}
       <div className="flex flex-col items-center justify-center mb-4 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          כל המתכונים שלך במקום אחד
+          מה מבשלים היום?
         </h1>
-        <p className="text-gray-600 text-lg">צור ושתף את המנות האהובות עליך</p>
+        {/* <p className="text-gray-600 text-lg">צור ושתף את המנות האהובות עליך</p> */}
       </div>
 
       {/* סרגל פילטרים */}
@@ -142,7 +144,7 @@ export default function RecipesPage() {
               title={recipe.title}
               labels={recipe.labels}
               image_url={recipe.image_url}
-              onClick={() => console.log("פתח מתכון:", recipe.title)}
+              onClick={() => router.push(`/recipes/${recipe.id}`)}
             />
           ))}
         </div>
