@@ -1,3 +1,5 @@
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
+
 const API_URL = "http://127.0.0.1:8000";
 
 interface Label {
@@ -8,7 +10,7 @@ interface Label {
 
 export async function getRecipes() {
   try {
-    const res = await fetch(`${API_URL}/recipes`);
+    const res = await fetchWithAuth(`${API_URL}/recipes`);
     if (!res.ok) throw new Error("Failed to fetch recipes");
     return res.json();
   } catch (err) {
@@ -25,7 +27,7 @@ export async function createRecipe(
   image_url?: string
 ) {
   try {
-    const res = await fetch(`${API_URL}/recipes`, {
+    const res = await fetchWithAuth(`${API_URL}/recipes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

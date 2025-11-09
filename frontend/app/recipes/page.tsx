@@ -72,7 +72,6 @@ export default function RecipesPage() {
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
           מה מבשלים היום?
         </h1>
-        {/* <p className="text-gray-600 text-lg">צור ושתף את המנות האהובות עליך</p> */}
       </div>
 
       {/* סרגל פילטרים */}
@@ -175,7 +174,7 @@ export default function RecipesPage() {
                 ✕
               </button>
 
-              {/* ✅ החלפה בין יצירה ידנית / AI */}
+              {/* החלפה בין יצירה ידנית / AI */}
               <CreateRecipeModal
                 onClose={() => setIsCreateOpen(false)}
                 onRecipeCreated={loadRecipes}

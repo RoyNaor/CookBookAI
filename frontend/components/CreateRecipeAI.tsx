@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import MessageBubble from "@/components/MessageBubble";
 
 interface CreateRecipeAIProps {
@@ -14,6 +15,7 @@ export default function CreateRecipeAI({ onClose, onRecipeCreated }: CreateRecip
   ]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -26,13 +28,14 @@ export default function CreateRecipeAI({ onClose, onRecipeCreated }: CreateRecip
     setInput("");
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/agent/generate", {
+      const res = await fetchWithAuth("http://127.0.0.1:8000/agent/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: input, thread_id: "create_recipe_ai" }),
+        body: JSON.stringify({ prompt: input }),
       });
+
       const data = await res.json();
-      const aiMessage = { role: "assistant", content: data.reply || "😕 שגיאה מהשרת" };
+      const aiMessage = { role: "assistant", content: data.reply || "שגיאה מהשרת" };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       setMessages((prev) => [

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { fetchWithAuth } from "@/lib/fetchWithAuth"; 
 
 interface Label {
   category: string;
@@ -29,26 +30,28 @@ export default function RecipePage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const resAll = await fetch("http://127.0.0.1:8000/recipes");
+        const resAll = await fetchWithAuth(`http://127.0.0.1:8000/recipes`);
+        if (!resAll.ok) throw new Error("Failed to fetch all recipes");
         const all = await resAll.json();
         setRecipes(all);
 
-        const res = await fetch(`http://127.0.0.1:8000/recipes/${id}`);
+        const res = await fetchWithAuth(`http://127.0.0.1:8000/recipes/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch recipe");
         const data = await res.json();
         setRecipe(data);
       } catch (err) {
-        console.error("Error fetching recipe:", err);
+        console.error("❌ Error fetching recipe:", err);
       } finally {
         setLoading(false);
       }
     }
+
     fetchData();
   }, [id]);
 
   if (loading) return <p className="text-center text-gray-500">טוען מתכון...</p>;
   if (!recipe) return <p className="text-center text-red-500">לא נמצא מתכון</p>;
 
-  // מציאת מתכון קודם/הבא
   const sortedIds = recipes.map((r) => r.id).sort((a, b) => a - b);
   const currentIndex = sortedIds.indexOf(recipeId);
   const prevId = sortedIds[currentIndex - 1];
@@ -108,7 +111,7 @@ export default function RecipePage() {
                 key={i}
                 className="px-3 py-1 rounded-full text-sm font-medium"
                 style={{
-                  backgroundColor: `${lbl.color}1A`, // רקע שקוף
+                  backgroundColor: `${lbl.color}1A`,
                   color: lbl.color,
                   border: `1px solid ${lbl.color}`,
                 }}

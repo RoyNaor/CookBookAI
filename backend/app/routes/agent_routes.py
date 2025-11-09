@@ -1,5 +1,5 @@
 from app.core.agent import workflow_agent
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from app.core.firebase_auth import verify_firebase_token
 
