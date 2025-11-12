@@ -1,5 +1,5 @@
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import NavbarWrapper from "@/components/NavbarWrapper";
 
 export const metadata = {
   title: "CookBookAI",
@@ -10,11 +10,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="he" dir="rtl">
       <body className="bg-cream text-chocolate min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1 p-0">
-          
-          {children}
-          </main>
+        <NavbarWrapper />
+        <main className="flex-1 p-0">{children}</main>
       </body>
     </html>
   );
