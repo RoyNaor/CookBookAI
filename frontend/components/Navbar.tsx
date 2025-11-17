@@ -33,7 +33,7 @@ export default function Navbar() {
     sessionStorage.removeItem("token");
     setUser(null);
     setDropdownOpen(false);
-    router.push("/login");
+    router.push("/");
   };
 
   return (

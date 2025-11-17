@@ -4,6 +4,7 @@ import { auth, googleProvider } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { ChefHat } from "lucide-react";
+import { syncUserToBackend } from "@/lib/api";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -21,25 +22,31 @@ export default function Register() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const token = await userCredential.user.getIdToken();
+      await syncUserToBackend(userCredential.user, token);
       sessionStorage.setItem("token", token);
       setMessage("נרשמת בהצלחה!");
-      setTimeout(() => router.push("/"), 800);
+      setTimeout(() => router.push("/recipes"), 800);
     } catch (error) {
       setMessage("שגיאה בהרשמה. נסה שוב.");
     }
   };
 
   const handleGoogleRegister = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const token = await result.user.getIdToken();
-      sessionStorage.setItem("token", token);
-      setMessage("נרשמת בהצלחה באמצעות Google!");
-      setTimeout(() => router.push("/"), 800);
-    } catch (error) {
-      setMessage("הרשמה עם Google נכשלה.");
-    }
-  };
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const token = await result.user.getIdToken();
+
+    // ⬅️ יצירת משתמש ב-DB - חובה!
+    await syncUserToBackend(result.user, token);
+
+    sessionStorage.setItem("token", token);
+    setMessage("נרשמת בהצלחה באמצעות Google!");
+    setTimeout(() => router.push("/recipes"), 800);
+  } catch (error) {
+    setMessage("הרשמה עם Google נכשלה.");
+  }
+};
+
 
   return (
     <div

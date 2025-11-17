@@ -54,30 +54,40 @@ def search_unsplash(query_hebrew: str) -> str:
 
 # Save recipe to DB
 @tool
-def save_recipe(recipe_json: str) -> str:
-    """Saves the recipe data into the database."""
+def save_recipe(recipe_json: str, user_uid: str) -> str:
+    """Saves the recipe data into the database connected to that user."""
     db: Session = SessionLocal()
     try:
         if isinstance(recipe_json, str):
             recipe_json = json.loads(recipe_json)
 
+        # 1. Find the user in DB
+        db_user = db.query(models.User).filter(models.User.uid == user_uid).first()
+        if not db_user:
+            return "User not found in database."
+
+        # 2. Create recipe linked to that user
         db_recipe = models.Recipe(
             title=recipe_json.get("title"),
             labels=recipe_json.get("labels", []),
             ingredients=recipe_json.get("ingredients", []),
             instructions=recipe_json.get("instructions", []),
             image_url=recipe_json.get("image_url"),
+            owner_id=db_user.id           
         )
+
         db.add(db_recipe)
         db.commit()
         db.refresh(db_recipe)
-        print(f"Recipe saved: {db_recipe.title} (ID: {db_recipe.id})")
-        return f"the '{db_recipe.title}'saved!"
+
+        return f"Recipe '{db_recipe.title}' saved for user {db_user.display_name}."
+
     except Exception as e:
         db.rollback()
-        return f"error while saving: {e}"
+        return f"Error while saving: {e}"
     finally:
         db.close()
+
 
 
 # Display recipe

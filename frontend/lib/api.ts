@@ -50,3 +50,20 @@ export async function createRecipe(
     throw err;
   }
 }
+
+export async function syncUserToBackend(user: any, token: string) {
+  await fetch(`${API_URL}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      uid: user.uid,
+      email: user.email,
+      display_name: user.displayName || user.email.split("@")[0],
+      avatar_url: user.photoURL,
+    }),
+  });
+}
+

@@ -111,18 +111,23 @@ def add_image_node(state):
 
 # Save Recipe to Database
 def save_recipe_node(state):
-    """
-    Saves the recipe to the local database using the existing SQLAlchemy model:
-    id (int), title (str), labels (JSON), ingredients (JSON), instructions (JSON), image_url (str)
-    """
+    """Saves recipe with owner_id using user_uid from state"""
     try:
         recipe_json = state["recipe_json"]
-        response = save_recipe.func(json.dumps(recipe_json, ensure_ascii=False))
+        user_uid = state.get("user_uid")   # ⭐️ NEW ⭐️
+
+        response = save_recipe.func(
+            json.dumps(recipe_json, ensure_ascii=False),
+            user_uid   # ⭐️ pass UID to the tool
+        )
+
         print(response)
         return state
+
     except Exception as e:
         print(f"Error saving recipe: {e}")
         return state
+
 
 
 #  Display Recipe to the User

@@ -19,9 +19,13 @@ async def generate_recipe(req: PromptRequest, user=Depends(verify_firebase_token
         chat_memory[req.thread_id].append({"role": "user", "content": req.prompt})
 
         result = await workflow_agent.ainvoke(
-            {"messages": chat_memory[req.thread_id]},
-            config={"configurable": {"thread_id": req.thread_id}},
-        )
+        {
+            "messages": chat_memory[req.thread_id],
+            "user_uid": user["uid"], 
+        },
+        config={"configurable": {"thread_id": req.thread_id}},
+    )
+
 
         display_text = result["display_text"]
         chat_memory[req.thread_id].append({"role": "assistant", "content": display_text})

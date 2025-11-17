@@ -17,8 +17,7 @@ export default function Login() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const token = await userCredential.user.getIdToken();
       sessionStorage.setItem("token", token);
-      setMessage("ההתחברות הצליחה!");
-      setTimeout(() => router.push("/"), 800);
+      router.push("/recipes");
     } catch (error) {
       setMessage("שגיאה בהתחברות. בדוק את הפרטים שלך.");
     }
@@ -29,8 +28,7 @@ export default function Login() {
       const result = await signInWithPopup(auth, googleProvider);
       const token = await result.user.getIdToken();
       sessionStorage.setItem("token", token);
-      setMessage("התחברת בהצלחה באמצעות Google!");
-      setTimeout(() => router.push("/"), 800);
+      router.push("/recipes");
     } catch (error) {
       setMessage("התחברות עם Google נכשלה.");
     }
