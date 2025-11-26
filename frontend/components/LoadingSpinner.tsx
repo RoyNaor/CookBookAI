@@ -1,28 +1,24 @@
-// components/LoadingSpinner.tsx
 "use client";
 import { ChefHat, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg" | "fullscreen"; // גדלים שונים לשימושים שונים
+  size?: "sm" | "md" | "lg" | "fullscreen"; 
   className?: string;
 }
 
 export default function LoadingSpinner({ size = "md", className = "" }: LoadingSpinnerProps) {
   
-  // 1. גרסת מסך מלא (לטעינת עמודים)
   if (size === "fullscreen") {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#fffaf0]/80 backdrop-blur-sm">
         <div className="relative">
-          {/* עיגול מסתובב חיצוני */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             className="w-24 h-24 rounded-full border-t-4 border-l-4 border-amber-500 border-r-4 border-amber-200 border-b-amber-200"
           />
           
-          {/* כובע שף פועם במרכז */}
           <motion.div
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
@@ -44,11 +40,10 @@ export default function LoadingSpinner({ size = "md", className = "" }: LoadingS
     );
   }
 
-  // 2. גרסאות קטנות (לכפתורים או אזורים קטנים)
   const sizeClasses = {
-    sm: "w-4 h-4",    // בתוך כפתור
-    md: "w-8 h-8",    // סקשן קטן
-    lg: "w-12 h-12",  // כרטיסייה
+    sm: "w-4 h-4",    
+    md: "w-8 h-8",    
+    lg: "w-12 h-12",  
   };
 
   return (

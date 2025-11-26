@@ -13,10 +13,10 @@ if not firebase_admin._apps:
     cred_data = os.getenv("FIREBASE_ADMIN_CREDENTIALS")
 
     if cred_data:
-        # --- Parse the JSON string ---
+        # Parse the JSON string 
         cred_dict = json.loads(cred_data)
 
-        # 🔹 Fix PEM line breaks (this is the key to solving InvalidByte(0, 92))
+        # Fix PEM line breaks (this is the key to solving InvalidByte(0, 92))
         if "private_key" in cred_dict:
             cred_dict["private_key"] = cred_dict["private_key"].replace("\\n", "\n")
 

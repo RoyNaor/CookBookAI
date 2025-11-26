@@ -7,12 +7,10 @@ import { Search, RotateCcw, Plus, XCircle } from "lucide-react";
 import CreateRecipeModal from "@/components/CreateRecipeModal"; 
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-// 1. ייבוא הקומפוננטה החדשה
 import LoadingSpinner from "@/components/LoadingSpinner"; 
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState<any[]>([]);
-  // 2. הוספת מצב טעינה (מתחיל ב-true)
   const [isLoading, setIsLoading] = useState(true); 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -22,14 +20,14 @@ export default function RecipesPage() {
   const router = useRouter();
 
   const loadRecipes = async () => {
-    setIsLoading(true); // התחלת טעינה (חשוב לרענון)
+    setIsLoading(true); 
     try {
       const data = await getRecipes();
       setRecipes(data);
     } catch (error) {
       console.error("Failed to fetch recipes", error);
     } finally {
-      setIsLoading(false); // סיום טעינה בכל מקרה
+      setIsLoading(false);
     }
   };
 
@@ -113,7 +111,6 @@ export default function RecipesPage() {
         </div>
 
         <button
-          // שיניתי כאן לשימוש בפונקציה הפנימית במקום רענון דפדפן מלא - הרבה יותר חלק
           onClick={loadRecipes} 
           className="p-2 border border-gray-300 rounded-full hover:bg-gray-50 transition"
           title="רענן רשימה"
@@ -146,7 +143,6 @@ export default function RecipesPage() {
         </button>
       </div>
 
-      {/* 3. לוגיקת תצוגה: טעינה -> תוצאות -> ריק */}
       {isLoading ? (
         <div className="flex justify-center items-center py-20 min-h-[300px]">
           <LoadingSpinner size="lg" />

@@ -12,7 +12,6 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
-  // ניהול סטייט חכם יותר
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -21,7 +20,7 @@ export default function Register() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // איפוס שגיאות
+    setError(""); 
 
     if (password !== confirmPassword) {
       setError("הסיסמאות אינן תואמות.");
@@ -36,11 +35,9 @@ export default function Register() {
       await syncUserToBackend(userCredential.user, token);
       sessionStorage.setItem("token", token);
       
-      // הצלחה! מציגים אנימציה
       setIsSuccess(true);
-      setTimeout(() => router.push("/recipes"), 2000); // נותנים למשתמש רגע להנות מההצלחה
+      setTimeout(() => router.push("/recipes"), 2000); 
     } catch (error: any) {
-      // טיפול בשגיאות נפוצות
       if (error.code === 'auth/email-already-in-use') {
         setError("האימייל הזה כבר קיים במערכת.");
       } else if (error.code === 'auth/weak-password') {
@@ -90,7 +87,6 @@ export default function Register() {
       >
         <AnimatePresence mode="wait">
           {isSuccess ? (
-            /* ---------------- מצב הצלחה (Success View) ---------------- */
             <motion.div
               key="success"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -112,7 +108,6 @@ export default function Register() {
             </motion.div>
 
           ) : (
-            /* ---------------- טופס הרשמה (Form View) ---------------- */
             <motion.div
               key="form"
               initial={{ opacity: 0 }}

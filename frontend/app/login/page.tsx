@@ -79,7 +79,6 @@ export default function Login() {
       >
         <AnimatePresence mode="wait">
           {isSuccess ? (
-            /* ---------------- מצב הצלחה (Success View) ---------------- */
             <motion.div
               key="success"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -101,7 +100,6 @@ export default function Login() {
             </motion.div>
 
           ) : (
-            /* ---------------- טופס התחברות (Form View) ---------------- */
             <motion.div
               key="form"
               initial={{ opacity: 0 }}
