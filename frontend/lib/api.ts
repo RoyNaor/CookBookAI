@@ -67,3 +67,32 @@ export async function syncUserToBackend(user: any, token: string) {
   });
 }
 
+export async function deleteRecipe(id: number) {
+  try {
+    const res = await fetchWithAuth(`${API_URL}/recipes/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) throw new Error("Failed to delete recipe");
+    return true;
+  } catch (err) {
+    console.error("❌ Error deleting recipe:", err);
+    throw err;
+  }
+}
+
+export async function updateRecipe(id: number, recipeData: any) {
+  try {
+    const res = await fetchWithAuth(`${API_URL}/recipes/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(recipeData),
+    });
+
+    if (!res.ok) throw new Error("Failed to update recipe");
+    return res.json();
+  } catch (err) {
+    console.error("❌ Error updating recipe:", err);
+    throw err;
+  }
+}

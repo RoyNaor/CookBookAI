@@ -45,7 +45,7 @@ export default function Navbar() {
     >
       <nav className="max-w-7xl mx-auto flex justify-between items-center px-6 py-3 h-[9vh]">
         {/* לוגו */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href={user ? "/recipes" : "/"} className="flex items-center gap-2">
           <div className="bg-amber-600 text-white rounded-full p-2">
             <ChefHat size={20} />
           </div>

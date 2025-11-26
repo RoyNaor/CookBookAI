@@ -22,6 +22,7 @@ export default function RecipePage() {
   const { id } = useParams();
   const router = useRouter();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,13 +33,12 @@ export default function RecipePage() {
       try {
         const resAll = await fetchWithAuth(`http://127.0.0.1:8000/recipes`);
         if (!resAll.ok) throw new Error("Failed to fetch all recipes");
-        const all = await resAll.json();
+
+        const all: Recipe[] = await resAll.json();
         setRecipes(all);
 
-        const res = await fetchWithAuth(`http://127.0.0.1:8000/recipes/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch recipe");
-        const data = await res.json();
-        setRecipe(data);
+        const selected = all.find((r) => r.id === recipeId);
+        setRecipe(selected || null);
       } catch (err) {
         console.error("❌ Error fetching recipe:", err);
       } finally {
@@ -47,7 +47,8 @@ export default function RecipePage() {
     }
 
     fetchData();
-  }, [id]);
+}, [recipeId]);
+
 
   if (loading) return <p className="text-center text-gray-500">טוען מתכון...</p>;
   if (!recipe) return <p className="text-center text-red-500">לא נמצא מתכון</p>;

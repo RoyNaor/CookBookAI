@@ -114,11 +114,11 @@ def save_recipe_node(state):
     """Saves recipe with owner_id using user_uid from state"""
     try:
         recipe_json = state["recipe_json"]
-        user_uid = state.get("user_uid")   # ⭐️ NEW ⭐️
+        user_uid = state.get("user_uid")   
 
         response = save_recipe.func(
             json.dumps(recipe_json, ensure_ascii=False),
-            user_uid   # ⭐️ pass UID to the tool
+            user_uid   
         )
 
         print(response)
