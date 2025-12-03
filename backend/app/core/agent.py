@@ -14,45 +14,40 @@ model = ChatOpenAI(model="gpt-4o-mini", temperature=0.4)
 memory = InMemorySaver()
 graph = StateGraph(dict, checkpointer=memory)
 
-# ------------------------------------------------------------------
-# 🔹 Helper function – add image (Unsplash → fallback to DALL·E)
-# ------------------------------------------------------------------
+
+#  add image (Unsplash → fallback to DALL·E)
 def add_image_to_json(state):
     """
     Adds an 'image_url' field to the recipe JSON using Unsplash first,
     and DALL·E as fallback if Unsplash has no results.
     """
     try:
-        print("🖼️ Adding image to recipe JSON...")
+        print("Adding image to recipe JSON...")
 
         recipe_json = state.get("recipe_json")
         if not recipe_json:
-            print("⚠️ No recipe_json found in state!")
+            print("No recipe_json found in state!")
             return state
 
         title = recipe_json.get("title", "מנה לא מזוהה")
 
-        # 🔍 נסה קודם ב-Unsplash
         image_url = search_unsplash.func(title)
         if not image_url or "לא נמצאה" in image_url:
-            print("⚠️ Unsplash failed, switching to DALL·E...")
+            print("Unsplash failed, switching to DALL·E...")
             image_url = generate_image.func(title)
 
-        # 💾 עדכן את ה-JSON
         recipe_json["image_url"] = image_url
         state["recipe_json"] = recipe_json
 
-        print(f"🖼️ Image added successfully")
+        print(f"Image added successfully")
         return state
 
     except Exception as e:
-        print(f"❌ Error adding image: {e}")
+        print(f"Error adding image: {e}")
         return state
 
 
-# ------------------------------------------------------------------
-# 🔹 Node 1 — Generate Recipe JSON
-# ------------------------------------------------------------------
+# Generate Recipe JSON
 def generate_recipe_node(state):
     """
     Uses the model to generate a valid recipe JSON.
@@ -98,16 +93,14 @@ def generate_recipe_node(state):
         ])
         recipe_json = json.loads(result.content)
         state["recipe_json"] = recipe_json
-        print(f"✅ Recipe JSON generated for: {recipe_json.get('title', 'לא ידוע')}")
+        print(f"Recipe JSON generated for: {recipe_json.get('title', 'לא ידוע')}")
         return state
     except Exception as e:
         print(f"Error generating recipe JSON: {e}")
         return state
 
 
-# ------------------------------------------------------------------
-# 🔹 Node 2 — Add Image (Unsplash → fallback DALL·E)
-# ------------------------------------------------------------------
+# Add Image (Unsplash → fallback DALL·E)
 def add_image_node(state):
     try:
         return add_image_to_json(state)
@@ -116,27 +109,28 @@ def add_image_node(state):
         return state
 
 
-# ------------------------------------------------------------------
-# 🔹 Node 3 — Save Recipe to Database
-# ------------------------------------------------------------------
+# Save Recipe to Database
 def save_recipe_node(state):
-    """
-    Saves the recipe to the local database using the existing SQLAlchemy model:
-    id (int), title (str), labels (JSON), ingredients (JSON), instructions (JSON), image_url (str)
-    """
+    """Saves recipe with owner_id using user_uid from state"""
     try:
         recipe_json = state["recipe_json"]
-        response = save_recipe.func(json.dumps(recipe_json, ensure_ascii=False))
+        user_uid = state.get("user_uid")   
+
+        response = save_recipe.func(
+            json.dumps(recipe_json, ensure_ascii=False),
+            user_uid   
+        )
+
         print(response)
         return state
+
     except Exception as e:
         print(f"Error saving recipe: {e}")
         return state
 
 
-# ------------------------------------------------------------------
-# 🔹 Node 4 — Display Recipe to the User
-# ------------------------------------------------------------------
+
+#  Display Recipe to the User
 def display_recipe_node(state):
     """
     Displays the saved recipe in a human-readable Hebrew format for the user.
@@ -145,16 +139,15 @@ def display_recipe_node(state):
         recipe_json = state["recipe_json"]
         text = display_recipe.func(json.dumps(recipe_json, ensure_ascii=False))
         state["display_text"] = text
-        print("✅ Recipe displayed successfully!")
+        print("Recipe displayed successfully!")
         return state
     except Exception as e:
         print(f"Error displaying recipe: {e}")
         return state
 
 
-# ------------------------------------------------------------------
-# 🧩 Build the Graph — 4 Sequential Steps
-# ------------------------------------------------------------------
+
+# Build the Graph
 graph.add_node("GenerateRecipe", generate_recipe_node)
 graph.add_node("AddImage", add_image_node)
 graph.add_node("SaveRecipe", save_recipe_node)
@@ -168,4 +161,4 @@ graph.set_entry_point("GenerateRecipe")
 graph.set_finish_point("DisplayRecipe")
 
 workflow_agent = graph.compile()
-print("✅ Graph agent loaded and ready (Hebrew mode)!")
+print("Graph agent loaded and ready!")

@@ -45,7 +45,6 @@ export default function CreateRecipeModal({ onClose, onRecipeCreated }: { onClos
           </button>
         </div>
 
-        {/* החלפת קומפוננטות */}
         {mode === "manual" ? (
           <CreateRecipe onClose={onClose} onRecipeCreated={onRecipeCreated} />
         ) : (
