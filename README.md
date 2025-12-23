@@ -1,66 +1,71 @@
-# 🍳 CookBookAI — AI-Powered Recipe Platform 
+# 🍳 CookBookAI
 
-**CookBookAI** is a full-stack application combining intelligent recipe generation powered by GPT-4 mini with a modern frontend built in Next.js and a FastAPI backend in Python.  
-It allows users to request, save, and visualize recipes with automatically generated images using Unsplash or DALL·E.
+> **AI-powered cooking assistant**  
+> Generate recipes, manage ingredients, and interact with an intelligent chef agent – all in one modern web app.
+
+![CookBookAI Banner](./public/banner.png)
 
 ---
 
-## 🧱 Project Structure
+## ✨ Overview
 
-```
+**CookBookAI** is a full-stack application that combines:
+- A modern **Next.js** frontend
+- A robust **FastAPI** backend
+- **Firebase Authentication**
+- An **AI agent** for recipe generation and cooking assistance
+
+The goal is to provide a smart, intuitive platform where users can explore recipes, interact with an AI chef, and manage personalized cooking experiences.
+
+---
+
+## 🧠 Key Features
+
+- 🤖 **AI Chef Agent** – conversational recipe generation & guidance  
+- 📖 **Recipe Management** – create, view, and explore recipes  
+- 🔐 **Firebase Authentication** – secure user login  
+- ⚡ **FastAPI Backend** – clean, scalable API  
+- 🎨 **Next.js Frontend** – modern UI with App Router  
+- 🔄 **CORS-ready** – seamless frontend ↔ backend communication  
+
+---
+
+## 🏗️ Tech Stack
+
+### Frontend
+- **Next.js 15**
+- **TypeScript**
+- **Tailwind CSS**
+- **App Router**
+
+### Backend
+- **FastAPI**
+- **SQLAlchemy**
+- **Firebase Admin SDK**
+- **LangChain / LangGraph**
+- **OpenAI API**
+
+---
+
+## 📂 Project Structure
+
+```txt
 CookBookAI/
 ├── backend/
 │   ├── app/
-│   ├── venv/
-│   ├── recipes.db
-│   ├── .env
-│   └── main.py
+│   │   ├── core/           # Firebase, AI agent logic
+│   │   ├── routes/         # API routes (recipes, agent, users)
+│   │   ├── models.py       # SQLAlchemy models
+│   │   ├── schemas.py      # Pydantic schemas
+│   │   ├── database.py
+│   │   └── main.py         # FastAPI entry point
+│   ├── requirements.txt
+│   └── venv/
 │
 ├── frontend/
 │   ├── app/
 │   ├── components/
-│   ├── lib/
 │   ├── public/
-│   ├── node_modules/
-│   ├── package.json
-│   ├── next.config.ts
-│   └── tailwind.config.ts
+│   └── next.config.ts
 │
-├── .gitignore
 └── README.md
-```
-
----
-
-## ⚙️ Tech Stack
-
-### Backend
-- **FastAPI** for REST API endpoints.  
-- **LangChain / LangGraph** for stateful conversational logic.  
-- **ChatOpenAI (GPT-4 mini)** for recipe generation.  
-- **Pydantic** for schema validation.  
-- **dotenv** for environment variable management.  
-- **SQLite** for local storage (`recipes.db`).
-
-### Frontend
-- **Next.js 15** with App Router.  
-- **TypeScript** for strong typing.  
-- **TailwindCSS**, **HeroUI**, and **Lucide React** for styling and icons.  
-- **React Hooks** (`useState`, `useEffect`) for state management.  
-- **API layer** via `/lib/api.ts` for backend integration.
-
----
-
-## 🧠 System Flow
-
-1. The user asks for a recipe (e.g., “Generate me a vegan pasta recipe”).  
-2. The backend agent creates a JSON recipe object with title, labels, ingredients, and instructions.  
-3. If Unsplash has no matching image, DALL·E is used as a fallback.  
-4. The recipe is saved to a local SQLite database via FastAPI.
-
----
-
-## 🧡 Credits
-
-Developed by **Roy Naor**
-
