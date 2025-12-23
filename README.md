@@ -3,8 +3,6 @@
 > **AI-powered cooking assistant**  
 > Generate recipes, manage ingredients, and interact with an intelligent chef agent – all in one modern web app.
 
-![CookBookAI Banner](./public/banner.png)
-
 ---
 
 ## ✨ Overview
