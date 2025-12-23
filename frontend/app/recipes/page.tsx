@@ -6,18 +6,29 @@ import RecipeCard from "@/components/RecipeCard";
 import { Search, RotateCcw, Plus, XCircle } from "lucide-react";
 import CreateRecipeModal from "@/components/CreateRecipeModal"; 
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/components/LoadingSpinner"; 
 
 export default function RecipesPage() {
   const [recipes, setRecipes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true); 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [sortOption, setSortOption] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [extraFilter, setExtraFilter] = useState("");
+  const router = useRouter();
 
   const loadRecipes = async () => {
-    const data = await getRecipes();
-    setRecipes(data);
+    setIsLoading(true); 
+    try {
+      const data = await getRecipes();
+      setRecipes(data);
+    } catch (error) {
+      console.error("Failed to fetch recipes", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -68,9 +79,8 @@ export default function RecipesPage() {
       {/* כותרת עליונה */}
       <div className="flex flex-col items-center justify-center mb-4 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          כל המתכונים שלך במקום אחד
+          מה מבשלים היום?
         </h1>
-        <p className="text-gray-600 text-lg">צור ושתף את המנות האהובות עליך</p>
       </div>
 
       {/* סרגל פילטרים */}
@@ -101,11 +111,11 @@ export default function RecipesPage() {
         </div>
 
         <button
-          onClick={() => window.location.reload()}
+          onClick={loadRecipes} 
           className="p-2 border border-gray-300 rounded-full hover:bg-gray-50 transition"
           title="רענן רשימה"
         >
-          <RotateCcw size={18} className="text-gray-700" />
+          <RotateCcw size={18} className={`text-gray-700 ${isLoading ? "animate-spin" : ""}`} />
         </button>
 
         <DropdownButton
@@ -133,8 +143,11 @@ export default function RecipesPage() {
         </button>
       </div>
 
-      {/* גריד מתכונים */}
-      {filteredRecipes.length > 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20 min-h-[300px]">
+          <LoadingSpinner size="lg" />
+        </div>
+      ) : filteredRecipes.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {filteredRecipes.map((recipe) => (
             <RecipeCard
@@ -142,12 +155,17 @@ export default function RecipesPage() {
               title={recipe.title}
               labels={recipe.labels}
               image_url={recipe.image_url}
-              onClick={() => console.log("פתח מתכון:", recipe.title)}
+              onClick={() => router.push(`/recipes/${recipe.id}`)}
             />
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500 mt-10">לא נמצאו מתכונים 😋</p>
+        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+           <p className="text-xl">לא נמצאו מתכונים</p>
+           <button onClick={resetFilters} className="text-amber-600 hover:underline mt-2 text-sm">
+             נסה לאפס את הסינון
+           </button>
+        </div>
       )}
 
       {/* מודאל יצירת מתכון */}
@@ -167,13 +185,12 @@ export default function RecipesPage() {
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
               <button
-                onClick={() => setIsCreateOpen(false)}
+                onClick={() => { setIsCreateOpen(false); loadRecipes(); }}
                 className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
               >
                 ✕
               </button>
 
-              {/* ✅ החלפה בין יצירה ידנית / AI */}
               <CreateRecipeModal
                 onClose={() => setIsCreateOpen(false)}
                 onRecipeCreated={loadRecipes}

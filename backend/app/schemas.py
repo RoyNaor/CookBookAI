@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 class Label(BaseModel):
     category: str   
@@ -18,6 +18,22 @@ class RecipeCreate(RecipeBase):
 
 class Recipe(RecipeBase):
     id: int
+
+    class Config:
+        from_attributes = True
+
+class UserBase(BaseModel):
+    uid: str
+    email: str
+    display_name: Optional[str] = None
+    avatar_url: Optional[str] = None
+
+class UserCreate(UserBase):
+    pass
+
+class User(UserBase):
+    id: int
+    recipes: List[Recipe] = []
 
     class Config:
         from_attributes = True

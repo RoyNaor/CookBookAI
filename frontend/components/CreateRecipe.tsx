@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { createRecipe } from "@/lib/api";
-import { Plus, Trash, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash, Image as ImageIcon, GripVertical } from "lucide-react"; 
 import CloudinaryUpload from "@/components/CloudinaryUpload";
+import { Reorder } from "framer-motion"; 
 
 interface CreateRecipeProps {
   onClose: () => void;
@@ -20,7 +21,6 @@ export default function CreateRecipe({ onClose, onRecipeCreated }: CreateRecipeP
   const [newStep, setNewStep] = useState("");
   const [imageUrl, setImageUrl] = useState<string>("");
 
-
   const addIngredient = () => {
     if (!newIngredient.trim() || !newAmount.trim()) return;
     setIngredients([...ingredients, { name: newIngredient, amount: newAmount }]);
@@ -34,12 +34,16 @@ export default function CreateRecipe({ onClose, onRecipeCreated }: CreateRecipeP
 
   const addStep = () => {
     if (!newStep.trim()) return;
+    if (steps.includes(newStep)) {
+        alert("השלב הזה כבר קיים ברשימה");
+        return;
+    }
     setSteps([...steps, newStep]);
     setNewStep("");
   };
 
-  const removeStep = (index: number) => {
-    setSteps(steps.filter((_, i) => i !== index));
+  const removeStep = (val: string) => {
+    setSteps(steps.filter((s) => s !== val));
   };
 
   const handleSubmit = async () => {
@@ -65,16 +69,14 @@ export default function CreateRecipe({ onClose, onRecipeCreated }: CreateRecipeP
       onRecipeCreated(); 
       onClose(); 
     } catch (error) {
-      alert("שגיאה בשמירת המתכון 😢");
+      alert("שגיאה בשמירת המתכון");
       console.error(error);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-10 space-y-8">
-      {/* <h1 className="text-3xl font-bold text-center mb-6">✨ יצירת מתכון חדש ✨</h1> */}
-
-      {/* ===== פרטי מתכון ===== */}
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-10 space-y-8 max-h-[85vh] overflow-y-auto">
+      {/*  פרטי מתכון  */}
       <div className="p-5 bg-amber-50 rounded-xl border border-amber-200 shadow-sm">
         <h2 className="text-xl font-semibold text-amber-900 mb-3">פרטי מתכון</h2>
 
@@ -139,7 +141,7 @@ export default function CreateRecipe({ onClose, onRecipeCreated }: CreateRecipeP
         </div>
       </div>
 
-      {/* ===== מצרכים ===== */}
+      {/*  מצרכים */}
       <div className="p-5 bg-amber-50 rounded-xl border border-amber-200 shadow-sm">
         <h2 className="text-xl font-semibold text-amber-900 mb-3">מצרכים</h2>
 
@@ -178,7 +180,7 @@ export default function CreateRecipe({ onClose, onRecipeCreated }: CreateRecipeP
         </div>
       </div>
 
-      {/* ===== שלבי הכנה ===== */}
+      {/*  שלבי הכנה  */}
       <div className="p-5 bg-amber-50 rounded-xl border border-amber-200 shadow-sm">
         <h2 className="text-xl font-semibold text-amber-900 mb-3">שלבי הכנה</h2>
 
@@ -188,6 +190,7 @@ export default function CreateRecipe({ onClose, onRecipeCreated }: CreateRecipeP
             onChange={(e) => setNewStep(e.target.value)}
             placeholder="הוסף שלב חדש..."
             className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber-600 outline-none"
+            onKeyDown={(e) => e.key === "Enter" && addStep()}
           />
           <button
             onClick={addStep}
@@ -197,22 +200,39 @@ export default function CreateRecipe({ onClose, onRecipeCreated }: CreateRecipeP
           </button>
         </div>
 
-        <div className="space-y-2 text-amber-900">
-          {steps.map((step, i) => (
-            <div key={i} className="flex justify-between bg-orange-100 px-4 py-2 rounded-lg items-center">
-              <span>{step}</span>
-              <button onClick={() => removeStep(i)}>
-                <Trash size={16} className="text-red-500 hover:text-red-700" />
+        {/* רשימת גרירה */}
+        <Reorder.Group axis="y" values={steps} onReorder={setSteps} className="space-y-2">
+          {steps.map((step) => (
+            <Reorder.Item
+              key={step} 
+              value={step}
+              className="flex justify-between items-center bg-orange-100 px-4 py-3 rounded-lg shadow-sm border border-orange-200 cursor-grab active:cursor-grabbing"
+              whileDrag={{ scale: 1.02, boxShadow: "0px 5px 15px rgba(0,0,0,0.1)" }}
+            >
+              <div className="flex items-center gap-3 w-full">
+                {/* אייקון גרירה */}
+                <GripVertical size={20} className="text-orange-400 shrink-0" />
+                <span className="text-amber-900 flex-1">{step}</span>
+              </div>
+              
+              <button 
+                onClick={() => removeStep(step)} 
+                className="bg-white p-1.5 rounded-full shadow-sm hover:bg-red-50 transition"
+              >
+                <Trash size={16} className="text-red-500" />
               </button>
-            </div>
+            </Reorder.Item>
           ))}
-        </div>
+        </Reorder.Group>
+        
+        {steps.length === 0 && (
+            <p className="text-gray-400 text-center text-sm mt-2">עדיין אין שלבים. הוסף שלב חדש למעלה.</p>
+        )}
       </div>
 
-      {/* ===== כפתור שמירה ===== */}
       <button
         onClick={handleSubmit}
-        className="w-full bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-lg py-3 transition-all"
+        className="w-full bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-lg py-3 transition-all shadow-md hover:shadow-lg transform active:scale-[0.99]"
       >
         🍽️ שמור מתכון
       </button>
